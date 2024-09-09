@@ -8,8 +8,10 @@ import IconCracked from "./assets/icon/cracked_icon.png";
 import CrackSound from "./assets/sound/coral4.ogg";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useEffect, useState, useRef } from 'react';
+import { useAccount } from 'wagmi';
 
 export const App = () => {
+  const {isConnected} = useAccount();
   // const {
   //   components: { Counter },
   //   systemCalls: { increment },
@@ -56,14 +58,27 @@ export const App = () => {
         <div className="mt-10 relative">
           <img src={IconBlock} className="w-30 h-30" />
           { isCracked && <img src={IconCracked} className="w-full h-full absolute top-0 left-0" /> }
-          <span className="absolute top-1/4 -mt-12 left-1/2 transform -translate-x-1/2 text-8xl font-bold text-red-500">{blockDuration}</span>
+          <span className="absolute top-1/4 -mt-12 left-1/2 transform -translate-x-1/2 text-8xl font-bold text-red-500">
+            {isStart ? blockDuration : '-'}
+          </span>
+          {isConnected ? (
+          <div className="absolute top-1/2 -mt-2 left-1/2 transform -translate-x-1/2">
+            {!isStart ? <><button className="text-white text-xl font-bold p-4 rounded-full bg-purple-500 hover:bg-purple-700">START GAME</button></> : <></>}
+          </div>
+          ) : (
+            <div className="absolute top-1/2 -mt-2 left-1/2 transform -translate-x-1/2">
+            <ConnectButton />
+          </div>
+          )}
            {/* Audio element to play crack sound */}
           <audio ref={audioRef} src={CrackSound} />
         </div>
         <button
           type="button"
           onClick={handleImageClick}
-          className="mt-10 cursor-pointer border-4 border-black bg-blue-500 hover:bg-blue-700 text-white font-bold p-4 rounded-full">
+          className="mt-10 cursor-pointer border-4 border-black bg-blue-500 hover:bg-blue-700 disabled:bg-gray-500 disabled:opacity-50 disabled:grayscale text-white font-bold p-4 rounded-full"
+          disabled={!isStart}
+          >
               <img src={IconPickAxe} className="w-28 h-28" />
         </button>
         <div className="mt-10 mb-10">
