@@ -8,11 +8,11 @@ export const getBurnerWallet = () => {
   const manualPrivateKey = params.get("privateKey");
   if (manualPrivateKey) return new Wallet(manualPrivateKey).privateKey;
 
-  const useAnvilAdminKey = import.meta.env.DEV && !params.has("asPlayer");
-  if (useAnvilAdminKey) {
-    // default anvil admin key
-    return "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
-  }
+  // const useAnvilAdminKey = import.meta.env.DEV && !params.has("asPlayer");
+  // if (useAnvilAdminKey) {
+  //   // default anvil admin key
+  //   return "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+  // }
 
   const storageKey = "mud:burnerWallet";
 
@@ -67,12 +67,8 @@ export function getNetworkConfig() {
     ? Number(params.get("initialBlockNumber"))
     : world?.blockNumber ?? -1; // -1 will attempt to find the block number from RPC
 
-  const useBurner =
-    (import.meta.env.DEV && !params.has("useExternalWallet")) ||
-    params.has("useBurner");
-  const burnerWalletPrivateKey = params.has("anon")
-    ? Wallet.createRandom().privateKey
-    : getBurnerWallet();
+  const useBurner = true;
+  const burnerWalletPrivateKey = getBurnerWallet();
 
   return {
     clock: {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Entity,
@@ -8,24 +9,27 @@ import {
   setComponent,
   updateComponent,
 } from "@latticexyz/recs";
-import { uuid } from "@latticexyz/utils";
+
+import { Hex, formatEther } from "viem";
 import lodash from "lodash";
-import { Hex } from "viem";
+import { uuid } from "@latticexyz/utils";
+import { getTransaction } from "viem/actions";
 
 import { skystrifeDebug } from "../../../debug";
 import { ContractType, useStore } from "../../hooks/useStore";
 import { createClientComponents } from "../../mud/createClientComponents";
 import { setupNetwork } from "../../mud/setupNetwork";
 
-const { sortBy, filter } = lodash;
-
 const debug = skystrifeDebug.extend("system-executor");
+
+const { sortBy, filter } = lodash;
 
 type CreateSystemExecutorArgs = {
   worldContract: ContractType;
   network: Awaited<ReturnType<typeof setupNetwork>>;
   components: ReturnType<typeof createClientComponents>;
   calculateMeanTxResponseTime: () => number;
+  sendAnalytics?: boolean;
 };
 
 type SystemExecutorArgs<T extends keyof ContractType["write"]> = {
@@ -58,6 +62,7 @@ export const createSystemExecutor = ({
   worldContract,
   network,
   components,
+  sendAnalytics,
   calculateMeanTxResponseTime,
 }: CreateSystemExecutorArgs) => {
   let latestBlock = 0n;
@@ -66,6 +71,7 @@ export const createSystemExecutor = ({
 
     latestBlock = block.number;
   });
+
 
   const executeSystem = async <T extends keyof ContractType["write"]>({
     entity,
@@ -124,12 +130,8 @@ export const createSystemExecutor = ({
     let gasEstimate = 0n;
 
     if (!forceManualGasEstimate) {
-      debug(
-        "Attempting to set gas estimate based on previous successful txs of same type"
-      );
-      const previousTxsOfSameSystemCall = [
-        ...runQuery([HasValue(components.Transaction, { systemId })]),
-      ].map((tx) => {
+      debug("Attempting to set gas estimate based on previous successful txs of same type");
+      const previousTxsOfSameSystemCall = [...runQuery([HasValue(components.Transaction, { systemId })])].map((tx) => {
         const txData = getComponentValueStrict(components.Transaction, tx);
         return {
           ...txData,
@@ -137,10 +139,8 @@ export const createSystemExecutor = ({
         };
       });
       const mostRecentNonPendingTx = sortBy(
-        filter(previousTxsOfSameSystemCall, (tx) =>
-          ["completed", "reverted"].includes(tx.status)
-        ),
-        (tx) => tx.completedTimestamp
+        filter(previousTxsOfSameSystemCall, (tx: any) => ["completed", "reverted"].includes(tx.status)),
+        (tx: any) => tx.completedTimestamp,
       ).reverse()[0];
 
       // in this case we have a successful tx, so we use the cached gas estimate
@@ -149,9 +149,7 @@ export const createSystemExecutor = ({
         mostRecentNonPendingTx.status !== "reverted" &&
         mostRecentNonPendingTx.gasEstimate
       ) {
-        debug(
-          `Successfully found gas estimate ${mostRecentNonPendingTx.gasEstimate.toString()}`
-        );
+        debug(`Successfully found gas estimate ${mostRecentNonPendingTx.gasEstimate.toString()}`);
         gasEstimate = mostRecentNonPendingTx.gasEstimate;
       } else {
         debug("Could not find previous gas estimate.");
@@ -188,27 +186,19 @@ export const createSystemExecutor = ({
             blockTag: "pending",
           } as any;
           if (!disableNonceManager) {
-            debug(
-              `Manually setting nonce to prevent extra network calls in viem`
-            );
+            debug(`Manually setting nonce to prevent extra network calls in viem`);
             const nonce = network.walletNonceManager.getNonce();
             gasEstimateOptions["nonce"] = nonce;
           }
 
-          gasEstimate = await ((estimateFunction as any)(
-            systemArgs,
-            gasEstimateOptions
-          ) as Promise<bigint>);
+          gasEstimate = await ((estimateFunction as any)(systemArgs, gasEstimateOptions) as Promise<bigint>);
           debug(`Successfully estimated gas: ${gasEstimate.toString()}`);
         } catch (e) {
           debug(`Manual gas estimation failed.`);
           updateComponent(components.Transaction, txEntity, {
             status: "reverted",
             completedTimestamp: BigInt(Date.now()),
-            error: (e as Error)
-              .toString()
-              .replaceAll(",", "")
-              .replaceAll("\n", " "),
+            error: (e as Error).toString().replaceAll(",", "").replaceAll("\n", " "),
           });
 
           // we early return here because if we failed gas estimation
@@ -264,10 +254,7 @@ export const createSystemExecutor = ({
       debug(`Tx reverted. Hash: ${txHash}`);
       updateComponent(components.Transaction, txEntity, {
         status: "reverted",
-        error: (e as Error)
-          .toString()
-          .replaceAll(",", "")
-          .replaceAll("\n", " "),
+        error: (e as Error).toString().replaceAll(",", "").replaceAll("\n", " "),
         completedTimestamp: BigInt(Date.now()),
       });
 
@@ -279,9 +266,7 @@ export const createSystemExecutor = ({
         });
         throw e;
       } else {
-        debug(
-          `Can retry tx, attempting again. Retry count ${currentRetryCount + 1}`
-        );
+        debug(`Can retry tx, attempting again. Retry count ${currentRetryCount + 1}`);
         txHash = await executeSystem({
           entity,
           systemCall,
@@ -307,10 +292,8 @@ export const createSystemExecutor = ({
     return txHash;
   };
 
-  const executeSystemWithExternalWallet = async <
-    T extends keyof ContractType["write"]
-  >(
-    args: Omit<SystemExecutorArgs<T>, "options">
+  const executeSystemWithExternalWallet = async <T extends keyof ContractType["write"]>(
+    args: Omit<SystemExecutorArgs<T>, "options">,
   ): Promise<Hex | undefined> => {
     const { externalWorldContract } = useStore.getState();
 

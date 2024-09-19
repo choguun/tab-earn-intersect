@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from "react";
 
 import { transportObserver } from "@latticexyz/common";
@@ -58,7 +59,7 @@ export function ExternalWalletProvider({ networkConfig, children }: Props) {
 
     useStore.setState({
       externalWalletClient: customExternalWalletClient,
-      externalWorldContract,
+      externalWorldContract: externalWorldContract as any,
     });
   }, [
     externalWalletClient,

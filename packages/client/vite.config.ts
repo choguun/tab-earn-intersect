@@ -14,4 +14,7 @@ export default defineConfig({
     minify: true,
     sourcemap: true,
   },
+  define: {
+    global: "globalThis",
+  },
 });

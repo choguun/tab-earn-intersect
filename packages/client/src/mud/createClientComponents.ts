@@ -9,13 +9,47 @@
  * an onchain component.
  */
 
+import { Type, defineComponent } from "@latticexyz/recs";
 import { SetupNetworkResult } from "./setupNetwork";
 
 export type ClientComponents = ReturnType<typeof createClientComponents>;
 
-export function createClientComponents({ components }: SetupNetworkResult) {
+export function createClientComponents({ components, world }: SetupNetworkResult) {
   return {
     ...components,
+    Transaction: defineComponent(world, {
+      entity: Type.OptionalEntity,
+      systemCall: Type.String,
+      systemId: Type.String,
+      gasEstimate: Type.OptionalBigInt,
+      manualGasEstimate: Type.Boolean,
+      gasPrice: Type.OptionalBigInt,
+      status: Type.String,
+      hash: Type.OptionalString,
+      error: Type.OptionalString,
+      submittedBlock: Type.OptionalBigInt,
+      completedBlock: Type.OptionalBigInt,
+      submittedTimestamp: Type.OptionalBigInt,
+      completedTimestamp: Type.OptionalBigInt,
+      actionId: Type.OptionalString,
+      clientSubmittedTimestamp: Type.OptionalBigInt,
+    }),
+    Action: defineComponent(
+      world,
+      {
+        entity: Type.OptionalEntity,
+        type: Type.String,
+        status: Type.String,
+      },
+      { id: "Action" },
+    ),
+    WalletBalance: defineComponent(
+      world,
+      {
+        value: Type.BigInt,
+      },
+      { id: "WalletBalance" },
+    ),
     // add your client components or overrides here
   };
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   createBurnerAccount,
   getNonceManager,
@@ -130,7 +131,10 @@ export async function setupNetwork(networkConfig: NetworkConfig) {
     const externalWalletClient = customWalletClient;
     const externalWorldContract = worldContract;
 
-    useStore.setState({ externalWalletClient, externalWorldContract });
+    useStore.setState({
+      externalWalletClient: externalWalletClient as any,
+      externalWorldContract: externalWorldContract as any
+    });
   }
 
   return {
