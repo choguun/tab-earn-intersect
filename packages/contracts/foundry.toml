@@ -28,5 +28,8 @@ eth_rpc_url = "https://rpc.garnetchain.com"
 [profile.redstone]
 eth_rpc_url = "https://rpc.redstonechain.com"
 
-[profile.interact]
+[profile.intersect]
 eth_rpc_url = "https://testnet-pearl-c612f.avax-test.network/ext/bc/CcXVATAg76vM849mrPoTigwp48qhFiN9WCa51DBQXNGkBKZw7/rpc?token=3296aa3e491dd5d366815601cc95be7275cd293486b09fe082619750d7b38587"
+
+[profile.avaxtestnet]
+eth_rpc_url = "https://avalanche-fuji-c-chain-rpc.publicnode.com"
