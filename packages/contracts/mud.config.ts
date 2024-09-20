@@ -8,12 +8,20 @@ export default defineWorld({
     outputDirectory: "codegen",
   },
   tables: {
-    PlayerScore: {
-      key: ["playerAddress"],
+    Player: {
       schema: {
-        playerAddress: "address",
-        value: "uint256",
-      }
+        player: "address",
+        entityId: "bytes32",
+      },
+      key: ["player"],
+    },
+
+    Score: {
+      schema: {
+        entityId: "bytes32",
+        value: "uint64",
+      },
+      key: ["entityId"],
     }
   },
 });

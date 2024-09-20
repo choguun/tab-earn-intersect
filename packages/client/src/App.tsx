@@ -11,5 +11,5 @@ export const App = () => {
       <LoadingScreen networkLayer={networkLayer} usePrepTime={true} />
       <Amalgema />
     </div>
-);
+  );
 };
