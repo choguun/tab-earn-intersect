@@ -7,7 +7,7 @@ import {
 import { transactionQueue } from "@latticexyz/common/actions";
 import { encodeEntity, syncToRecs } from "@latticexyz/store-sync/recs";
 import mudConfig from "contracts/mud.config";
-import IWorldAbi from "contracts/out/IWorld.sol/IWorld.abi.json";
+import IWorldAbi from "../../IWorld.abi.json";
 import { map, filter } from "rxjs";
 import { getContract } from "viem";
 import {

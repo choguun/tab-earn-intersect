@@ -1,4 +1,4 @@
-import IWorldAbi from "contracts/out/IWorld.sol/IWorld.abi.json";
+import IWorldAbi from "../../IWorld.abi.json";
 import {
   GetContractReturnType,
   PublicClient,
