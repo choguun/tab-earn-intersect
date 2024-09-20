@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 import { transportObserver } from "@latticexyz/common";
 import { transactionQueue } from "@latticexyz/common/actions";
-import IWorldAbi from "contracts/out/IWorld.sol/IWorld.abi.json";
+import IWorldAbi from "../IWorld.abi.json";
 import {
   createPublicClient,
   fallback,
