@@ -13,8 +13,5 @@ export default defineConfig({
     target: "es2022",
     minify: true,
     sourcemap: true,
-  },
-  define: {
-    global: "globalThis",
-  },
+  }
 });
