@@ -20,7 +20,7 @@ import { MUDChain, mudFoundry, redstone, garnet } from "@latticexyz/common/chain
  */
 
 
-export const interact: any = {
+export const intersect: any = {
     id: 1612, // Your custom chain ID
     name: 'InteractTestnet',
     // network: 'my-custom-network',
@@ -39,10 +39,10 @@ export const interact: any = {
     },
     blockExplorers: {
       default: {
-        name: 'InteractExplorer',
+        name: 'IntersectExplorer',
         url: 'https://subnets-test.avax.network/intersect',
       },
     },
 };
 
-export const supportedChains: MUDChain[] = [mudFoundry, redstone, garnet, interact];
+export const supportedChains: MUDChain[] = [mudFoundry, redstone, garnet, intersect];
