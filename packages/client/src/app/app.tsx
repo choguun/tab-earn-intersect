@@ -20,11 +20,15 @@ export const App = () => {
   const {
       components: { Score },
       executeSystemWithExternalWallet,
+      network: { publicClient },
   } = useAmalgema();
 
   const {isConnected} = useAccount();
 
   const { address } = useExternalAccount();
+
+  console.log("address: ");
+  console.log(address);
 
   const score = useComponentValue(
     Score,
@@ -39,13 +43,29 @@ export const App = () => {
   const [isCracked, setIsCracked] = useState(false);
   const [blockDuration, setBlockDuration] = useState(1);
   const [token, setToken] = useState(0);
+  const [balance, setBalance] = useState(0);
   const audioRef = useRef(null); // Reference for the audio element
+
+  const fetchBalance = async () => {
+    if (address) {
+      const _balance = await publicClient.getBalance({ 
+        address: address,
+      });
+      setBalance(Number(_balance)/10**18);
+    }
+  }
 
   useEffect(() => {
     if (score) {
       setToken(Number(score.value));
     }
   }, [score]);
+
+  useEffect(() => {
+    if(address) {
+      fetchBalance();
+    }
+  }, [address]);
 
   const handleStartGame = async () => {
     // await executeSystemWithExternalWallet({
@@ -74,7 +94,7 @@ export const App = () => {
       audioRef.current.play();
     }
 
-    let _token = token;
+    const _token = token;
     setToken(_token + 1);
 
     // Reset the cracked state after some time (optional if you want the crack to disappear after blinking)
@@ -96,6 +116,8 @@ export const App = () => {
       </nav>
       <div className="flex flex-col justify-center items-center bg-slate-400">
         <div className="mt-10">
+          <span>Session Wallet: {address}</span><br/>
+          <span>Session Wallet Balance: {balance}</span><br/>
           <span className="text-6xl font-bold bg-gradient-to-r from-red-500 via-orange-500 via-yellow-500 via-green-500 via-blue-500 via-indigo-500 to-violet-500 text-transparent bg-clip-text">VOXEL TAPPER</span>
         </div>
         <div className="mt-10 relative">

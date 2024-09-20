@@ -13,11 +13,34 @@
  */
 
 import { MUDChain, mudFoundry, redstone, garnet } from "@latticexyz/common/chains";
-import { avalancheFuji } from "viem/chains";
+import { avalancheFuji, Chain } from "viem/chains";
 
 /*
  * See https://mud.dev/guides/hello-world/add-chain-client
  * for instructions on how to add networks.
  */
 
-export const supportedChains: MUDChain[] = [mudFoundry, redstone, garnet, avalancheFuji];
+export const intersect: Chain = {
+    id: 1612, // Your custom chain ID
+    name: 'InteractTestnet',
+    // network: 'my-custom-network',
+    nativeCurrency: {
+      name: 'Perl Token',
+      symbol: 'Perl',
+      decimals: 18,
+    },
+    rpcUrls: {
+        default: {
+            http: ['https://testnet-pearl-c612f.avax-test.network/ext/bc/CcXVATAg76vM849mrPoTigwp48qhFiN9WCa51DBQXNGkBKZw7/rpc?token=3296aa3e491dd5d366815601cc95be7275cd293486b09fe082619750d7b38587'],
+            webSocket: ['wss://testnet-pearl-c612f.avax-test.network/ext/bc/CcXVATAg76vM849mrPoTigwp48qhFiN9WCa51DBQXNGkBKZw7/ws?token=3296aa3e491dd5d366815601cc95be7275cd293486b09fe082619750d7b38587'],
+        },
+    },
+    blockExplorers: {
+      default: {
+        name: 'IntersectExplorer',
+        url: 'https://subnets-test.avax.network/intersect',
+      },
+    },
+};
+
+export const supportedChains: MUDChain[] = [mudFoundry, redstone, garnet, avalancheFuji, intersect];

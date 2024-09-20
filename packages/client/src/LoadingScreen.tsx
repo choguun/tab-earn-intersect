@@ -96,7 +96,7 @@ export const LoadingScreen = ({ networkLayer, usePrepTime }: Props) => {
 
   const doneLoading = usePrepTime ? prepareGameProgress === 100 : loadingState.step === SyncStep.LIVE;
   useEffect(() => {
-    if (doneLoading && worldValid) setHide(true);
+    if (worldValid) setHide(true);
   }, [doneLoading, worldValid]);
 
   const showPrepMessage = loadingState.step === SyncStep.LIVE && usePrepTime;
